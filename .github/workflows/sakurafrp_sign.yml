@@ -7,7 +7,7 @@ permissions:
 on:
   # 每天 北京时间 7:00 执行（UTC 23:00）
   schedule:
-    - cron: '0 23 * * *'
+    - cron: '0 0 * * *'
   
   # 手动触发
   workflow_dispatch:

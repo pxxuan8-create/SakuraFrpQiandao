@@ -1,4 +1,4 @@
-# SakuraFrp 自动签到脚本
+﻿# SakuraFrp 自动签到脚本
 
 使用 Playwright 驱动浏览器，并通过 AI 视觉识别完成 SakuraFrp 九宫格验证码签到。
 
@@ -67,7 +67,7 @@ python main.py
 
 ## GitHub Actions 部署
 
-工作流文件位于 `.github/workflows/sakurafrp_sign.yml`，默认每天北京时间 9:00 执行，也支持手动触发。
+工作流文件位于 `.github/workflows/sakurafrp_sign.yml`，默认每天北京时间 0:05 执行，也支持手动触发。
 
 需要配置以下 Secrets：
 
@@ -79,15 +79,18 @@ python main.py
 | `API_KEY` | API 密钥 |
 | `MODEL` | 多模态模型名称 |
 
-邮件通知为可选配置：
+邮件通知为可选配置（推荐配置，签到结果一眼可辨）：
 
 | 名称 | 说明 |
 | --- | --- |
-| `EMAIL_USERNAME` | 发件邮箱 |
-| `EMAIL_PASSWORD` | 邮箱授权码或应用密码 |
-| `RECEIVER_EMAIL` | 收件邮箱，默认发给自己 |
-| `SMTP_SERVER` | SMTP 服务器，默认 `smtp.gmail.com` |
-| `SMTP_PORT` | SMTP 端口，默认 `587` |
+| `SMTP_HOST` | SMTP 服务器，QQ 邮箱填 `smtp.qq.com` |
+| `SMTP_USER` | 发件邮箱（如 QQ 邮箱） |
+| `SMTP_PASS` | 邮箱 SMTP 授权码（非登录密码） |
+| `SMTP_TO` | 收件邮箱（签到结果邮件收件人） |
+
+邮件标题格式：`【SakuraFrp签到成功】2026-09-07 00:05:06` / `【SakuraFrp签到失败】2026-09-07 00:05:06`（北京时间，免登录确认签到成败）。
+
+> 兼容旧命名：`SMTP_SERVER` / `EMAIL_USERNAME` / `EMAIL_PASSWORD` / `RECEIVER_EMAIL` 仍可回退使用，但推荐统一用上面 `SMTP_*`。
 
 Actions 使用 GitHub runner 自带 Chrome，并执行 `python -m playwright install-deps chromium` 安装 Linux 运行依赖，避免每次下载 Playwright Chromium 大包。
 
@@ -114,13 +117,14 @@ SakuraFrp-Qiandao/
 
 ```yaml
 schedule:
-  - cron: '0 1 * * *'  # UTC 1:00 = 北京时间 9:00
+  - cron: '5 16 * * *'  # UTC 16:05 = 北京时间 0:05
 ```
 
 常用时间对照：
+- `5 16 * * *` - 每天 0:05（北京时间）
+- `0 16 * * *` - 每天 0:00（北京时间）
 - `0 1 * * *` - 每天 9:00（北京时间）
 - `0 13 * * *` - 每天 21:00（北京时间）
-- `0 1,13 * * *` - 每天 9:00 和 21:00
 
 ### AI 模型推荐
 
@@ -169,3 +173,4 @@ HEADLESS=false
 - [GitHub Actions 文档](https://docs.github.com/en/actions)
 - [copilot-api](https://github.com/caozhiyuan/copilot-api)
 - [LiteLLM](https://github.com/BerriAI/litellm)
+

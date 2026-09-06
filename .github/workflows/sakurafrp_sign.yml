@@ -2,12 +2,11 @@ name: SakuraFrp 自动签到
 
 permissions:
   contents: read
-  actions: write
 
 on:
-  # 每天 北京时间 7:00 执行（UTC 23:00）
+  # 每天 北京时间 0:05 执行（UTC 16:05）
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '5 16 * * *'
   
   # 手动触发
   workflow_dispatch:
@@ -44,21 +43,12 @@ jobs:
         run: |
           python main.py
       
-      - name: 发送邮件通知
+      - name: 发送结果邮件
         if: always()
         env:
-          SMTP_SERVER: ${{ secrets.SMTP_SERVER || 'smtp.gmail.com' }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}
-          EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-          RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL || secrets.EMAIL_USERNAME }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_TO: ${{ secrets.SMTP_TO }}
         run: |
           python send_email.py
-      
-      - name: 上传日志
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: checkin-logs
-          path: checkin.log
-          retention-days: 7
